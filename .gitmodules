@@ -1,0 +1,3 @@
+[submodule "cs50-lua/lib/knife"]
+	path = cs50-lua/lib/knife
+	url = https://github.com/airstruck/knife.git
