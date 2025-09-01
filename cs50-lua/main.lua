@@ -14,7 +14,7 @@ ALPHABET = 'abcdefghijklmnopqrstuvwxyz\''
 
 local font = love.graphics.newFont('fonts/font.ttf', 64)
 
-local currentTime = 3
+local currentTime = 60
 local currentCharIndex = 1
 local score = 0
 
@@ -61,7 +61,7 @@ function love.keypressed(key)
 	if gameOver and key == 'space' then
 		gameOver = false
 		score = 0
-		currentCharIndex = 1
+		chooseWord()
 	end
 
 	if not start and not gameOver then
