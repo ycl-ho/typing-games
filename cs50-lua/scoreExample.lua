@@ -7,7 +7,7 @@ end
 local filename = "./highscores"
 
 local list = {}
-local testList = {{name='Alice', score=3000, date='Sun Sep  7 22:27'},{name='Bob', score=50, name='Thu Jan  1 11:59'}}
+local testList = {{name='Alice', score=3000, date='Sun Sep  7 22:27'},{name='Bob', score=50, date='Thu Jan  1 11:59'},{name='Charlie', score=9999, date='Mon Jan 1 11:59'}}
 
 -- OPEN AND PRINT SCORES
 function printScoresTable() 
@@ -135,7 +135,8 @@ end
 -- dateIter = os.date():gmatch("%S+")
 -- saveLine("asdf")
 -- printScoresTable()
-loadScoresTable()
-print2dTable(list)
--- printTableSingle({1,2,3})
--- print(testList[1])
+-- loadScoresTable()
+-- print2dTable(list)
+print2dTable(testList)
+print()
+print2dTable(testList)
