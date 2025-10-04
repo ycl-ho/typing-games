@@ -1,0 +1,73 @@
+-- Save function
+function saveTable(tbl, filename)
+    local file = io.open(filename, "w")
+    if file then
+        file:write("return ")
+        file:write(tableToString(tbl))
+        file:close()
+        return true
+    else
+        return false, "Could not open file for writing."
+    end
+end
+
+-- Helper to convert table to string
+function tableToString(tbl)
+    local parts = {}
+    for k, v in pairs(tbl) do
+        local key_str
+        if type(k) == "number" then
+            key_str = "[" .. k .. "]"
+        elseif type(k) == "string" then
+            key_str = string.format("%q", k)
+        else
+            -- Handle other key types if needed, or error
+            error("Unsupported key type: " .. type(k))
+        end
+
+        local value_str
+        if type(v) == "number" then
+            value_str = tostring(v)
+        elseif type(v) == "string" then
+            value_str = string.format("%q", v)
+        elseif type(v) == "table" then
+            value_str = tableToString(v)
+        else
+            -- Handle other value types or error
+            error("Unsupported value type: " .. type(v))
+        end
+        table.insert(parts, key_str .. " = " .. value_str)
+    end
+    return "{" .. table.concat(parts, ", ") .. "}"
+end
+
+-- Load function
+function loadTable(filename)
+    local file = io.open(filename, "r")
+    if file then
+        local content = file:read("*all")
+        file:close()
+        local func, err = loadstring(content) -- isn't this horrible practice bc of security concern? they're executing the contents of the savefile
+        if func then
+            return func()
+        else
+            return nil, "Error loading table: " .. err
+        end
+    else
+        return nil, "Could not open file for reading."
+    end
+end
+
+-- Example usage:
+local myTable = {
+    name = "Example",
+    data = {1, 2, 3},
+    settings = {
+        volume = 0.8,
+        fullscreen = true
+    }
+}
+
+saveTable(myTable, "my_data.lua")
+local loadedTable = loadTable("my_data.lua")
+print(loadedTable.name) -- Output: Example
