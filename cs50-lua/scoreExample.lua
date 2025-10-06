@@ -5,9 +5,18 @@ function fileIOExample()
 end
 
 local filename = "./highscores"
+local testSaveFileName = "./testSaveFile"
 
 local list = {}
-local testList = {{name='Alice', score=3000, date='Sun Sep  7 22:27'},{name='Bob', score=50, date='Thu Jan  1 11:59'},{name='Charlie', score=9999, date='Mon Jan 1 11:59'}}
+local testList = {{name='Alice', score=3000, date='Sun Sep  7 22:27'},{name='Bob', score=50, date='Thu Jan  1 11:59'},{name='Charlie', score=9999, date='Mon Jan  1 11:59'}}
+
+-- SAVE AND OVERWRITE SCORES
+function saveOverwriteScore() 	
+	dataString = twoDTableToString(testList)
+	local file = assert(io.open(testSaveFileName, "w"))
+	file:write(dataString)
+	file:close()
+end
 
 -- OPEN AND PRINT SCORES
 function printScoresTable() 
@@ -20,20 +29,39 @@ end
 
 -- OPEN AND LOAD SCORES
 function loadScoresTable()
-	local file = assert(io.open(filename, "r"))
+	local file = assert(io.open(testSaveFileName, "r"))
 	fileString = file:read("*all")
 	local scoresTable = {}
 	for line in fileString:gmatch("[^\r\n]+") do
 		-- printLine(line)
 		-- load line into table?>,,.?
-		local lineTable = {}
-		for word in line:gmatch("[^\t]+") do
-			table.insert(lineTable, word)
-		end
-		table.insert(scoresTable,lineTable)
+
+		-- local lineTable = {}
+		-- for word in line:gmatch("[^\t]+") do
+		-- 	table.insert(lineTable, word)
+		-- end
+		-- table.insert(scoresTable,lineTable)
+		iter = line:gmatch("[^\t]+")
+		local lineTable = {
+			name = iter(),
+			score = iter(),
+			date = iter()
+		}
+		table.insert(scoresTable, lineTable)
 	end
 	-- print2dTable(scoresTable)
 	list = scoresTable
+end
+
+function twoDTableToString(tbl)	
+	returnString = ""
+	for k, v in ipairs(tbl) do
+		for k1, v1 in pairs(v) do
+			returnString = returnString .. v1 .. "\t"
+		end
+		returnString = returnString .. "\n"
+	end
+	return returnString
 end
 
 function print2dTable(tbl)
@@ -53,7 +81,7 @@ end
 function tabletostring(tbl)
     local parts = {}
     for k, v in pairs(tbl) do
-        local key_str
+	local key_str
         if type(k) == "number" then
             key_str = "[" .. k .. "]"
         elseif type(k) == "string" then
@@ -137,6 +165,14 @@ end
 -- printScoresTable()
 -- loadScoresTable()
 -- print2dTable(list)
-print2dTable(testList)
-print()
-print2dTable(testList)
+
+-- print2dTable(testList)
+-- print()
+-- print2dTable(testList)
+--
+print(twoDTableToString(testList))
+print("test loading table from file")
+print(twoDTableToString(list) .. " empty?")
+loadScoresTable()
+print(twoDTableToString(list))
+print(list[1].name)
