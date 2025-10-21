@@ -1,4 +1,4 @@
--- OPEN AND READ FILE
+-- OPEN AND READ FILE - PRACTICE
 function fileIOExample()
 	local file = assert(io.open("./topscore", "r"))
 	return file:read("*all")
@@ -10,15 +10,37 @@ local testSaveFileName = "./testSaveFile"
 local list = {}
 local testList = {{name='Alice', score=3000, date='Sun Sep  7 22:27'},{name='Bob', score=50, date='Thu Jan  1 11:59'},{name='Charlie', score=9999, date='Mon Jan  1 11:59'}}
 
+-- ADD NEW HIGH SCORE
+function addScoreToList(name,score,date)
+	newscore = {name=name, score=score, date=date}
+	table.insert(list, newscore)
+	sortScoresList()
+	-- TODO
+	-- useless lmao: check for identical score... how to handle idk
+	-- -- isEqual(a,b), compare two scores by value
+	-- finish testing
+	-- empty file works fine
+	if (#list > 5) then
+		list = {table.unpack(list, 1, 5)}
+	end
+	saveOverwriteScore()
+end
+
+-- SORT SCORES LIST BY SCORE
+-- works on empty file
+function sortScoresList()
+	table.sort(list, function(a,b) return a.score > b.score end)
+end
+
 -- SAVE AND OVERWRITE SCORES
 function saveOverwriteScore() 	
-	dataString = twoDTableToString(testList)
+	dataString = twoDTableToString(list)
 	local file = assert(io.open(testSaveFileName, "w"))
 	file:write(dataString)
 	file:close()
 end
 
--- OPEN AND PRINT SCORES
+-- OPEN AND PRINT SCORES - PRACTICE
 function printScoresTable() 
 	local file = assert(io.open(filename, "r"))
 	fileString = file:read("*all")
@@ -27,26 +49,24 @@ function printScoresTable()
 	end
 end
 
--- OPEN AND LOAD SCORES
+-- OPEN FILE AND LOAD SCORES INTO TABLE
 function loadScoresTable()
 	local file = assert(io.open(testSaveFileName, "r"))
 	fileString = file:read("*all")
 	local scoresTable = {}
 	for line in fileString:gmatch("[^\r\n]+") do
-		-- printLine(line)
-		-- load line into table?>,,.?
-
-		-- local lineTable = {}
-		-- for word in line:gmatch("[^\t]+") do
-		-- 	table.insert(lineTable, word)
-		-- end
-		-- table.insert(scoresTable,lineTable)
+		-- not handling invalid text formatting yet
 		iter = line:gmatch("[^\t]+")
-		local lineTable = {
-			name = iter(),
-			score = iter(),
-			date = iter()
-		}
+		local name = assert(iter())
+		local score = assert(tonumber(assert(iter())))
+		local date = assert(iter())
+		local lineTable = {name=name, score=score, date=date}
+		-- had some kind of error when loading empty file here, cant remember
+		-- local lineTable = {
+		--  	name = iter(),
+		--  	score = tonumber(iter()),
+		--  	date = iter()
+		-- }
 		table.insert(scoresTable, lineTable)
 	end
 	-- print2dTable(scoresTable)
@@ -55,11 +75,14 @@ end
 
 function twoDTableToString(tbl)	
 	returnString = ""
-	for k, v in ipairs(tbl) do
-		for k1, v1 in pairs(v) do
-			returnString = returnString .. v1 .. "\t"
-		end
-		returnString = returnString .. "\n"
+	for _, v in ipairs(tbl) do
+		-- for k1, v1 in pairs(v) do
+		-- 	returnString = returnString .. v1 .. "\t"
+		-- end
+		-- returnString = returnString .. "\n"
+		returnString = returnString .. v.name .. "\t"
+			.. v.score .. "\t"
+			.. v.date .. "\n"
 	end
 	return returnString
 end
@@ -134,8 +157,6 @@ function saveLine(string)
 	file:close()
 end
 
--- goddamnit i have to sort it all too and then write over everything
-
 -- print("Hello World")
 -- l = fileIOExample()
 -- -- literator = l:gmatch("%S+")  -- split spaces
@@ -174,5 +195,13 @@ print(twoDTableToString(testList))
 print("test loading table from file")
 print(twoDTableToString(list) .. " empty?")
 loadScoresTable()
-print(twoDTableToString(list))
-print(list[1].name)
+print("original: \n" .. twoDTableToString(list))
+sortScoresList()
+print("after sort: \n" .. twoDTableToString(list))
+-- print(list[1].name)
+-- print(#list)
+addScoreToList("Deonte",99999,"Wed Oct  8 22:16")
+print("after new score: \n" .. twoDTableToString(list))
+-- TODO
+-- save funcs
+-- error handling for loading file - empty. should just not populate table / indices if value is not found. how to handle?
