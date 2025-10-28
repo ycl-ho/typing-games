@@ -10,6 +10,13 @@ local testSaveFileName = "./testSaveFile"
 local list = {}
 local testList = {{name='Alice', score=3000, date='Sun Sep  7 22:27'},{name='Bob', score=50, date='Thu Jan  1 11:59'},{name='Charlie', score=9999, date='Mon Jan  1 11:59'}}
 
+-- DETERMINE IF SCORE IS HIGH SCORE
+function isNewHighScore(newscore)
+	if #list == 0 or #list < 5 then return true end
+	return newscore.score > list[#list].score
+end
+-- doesn't work if scores list is empty
+
 -- ADD NEW HIGH SCORE
 function addScoreToList(name,score,date)
 	newscore = {name=name, score=score, date=date}
@@ -202,6 +209,8 @@ print("after sort: \n" .. twoDTableToString(list))
 -- print(#list)
 addScoreToList("Deonte",99999,"Wed Oct  8 22:16")
 print("after new score: \n" .. twoDTableToString(list))
+print(list[#list].score)
+print(isNewHighScore({name="Deonte",score=99999,date="Wed Oct  8 22:16"}))
 -- TODO
 -- save funcs
 -- error handling for loading file - empty. should just not populate table / indices if value is not found. how to handle?
